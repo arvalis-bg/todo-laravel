@@ -7,26 +7,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Todo extends Model
 {
-    protected $fillable = [
-        'user_id',
-        'category_id',
-        'title',
-        'description',
-        'priority',
-        'is_completed',
-    ];
-
-    protected $casts = [
-        'is_completed' => 'boolean',
-    ];
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
+    protected $fillable = ['title','category_id','priority','completed','user_id'];
+    protected $casts = ['completed'=>'boolean'];
 
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

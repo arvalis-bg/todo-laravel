@@ -7,10 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
-    protected $fillable = [
-        'name',
-        'user_id',
-    ];
+    protected $fillable = ['name'];
 
     public function todos(): HasMany
     {

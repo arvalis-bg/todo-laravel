@@ -1,20 +1,47 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Web\AuthWebController;
+use App\Http\Controllers\Web\TodoWebController;
 
-Route::get('/', function () {
-    return view('welcome');
+/* Guest routes */
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthWebController::class, 'showLogin'])
+        ->name('login');
+
+    Route::post('/login', [AuthWebController::class, 'login']);
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
+/* Authenticated routes */
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
-require __DIR__.'/auth.php';
+    // Logout
+    Route::post('/logout', [AuthWebController::class, 'logout'])
+        ->name('logout');
+
+    // Default redirect
+    Route::get('/', fn () => redirect('/todos'));
+
+    // Todo pages (Web → API)
+    Route::get('/todos', [TodoWebController::class, 'index'])
+        ->name('todos.index');
+
+    Route::get('/todos/create', [TodoWebController::class, 'create'])
+        ->name('todos.create');
+
+    Route::post('/todos', [TodoWebController::class, 'store'])
+        ->name('todos.store');
+
+    Route::get('/todos/{todo}/edit', [TodoWebController::class, 'edit'])
+        ->name('todos.edit');
+
+    Route::put('/todos/{todo}', [TodoWebController::class, 'update'])
+        ->name('todos.update');
+
+    Route::patch('/todos/{todo}/toggle', [TodoWebController::class, 'toggle'])
+        ->name('todos.toggle');
+
+    // Todo stats
+    Route::get('/todos/stats', [TodoWebController::class, 'stats'])
+        ->name('todos.stats');
+});
