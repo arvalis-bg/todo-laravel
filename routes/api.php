@@ -14,5 +14,6 @@ Route::get('/me',      [AuthController::class, 'me'])
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('todos', TodoController::class);
     Route::get('categories', [CategoryController::class, 'index']);
+    Route::get('categories/stats', [CategoryController::class, 'stats']);
     Route::patch('todos/{todo}/toggle', [TodoController::class, 'toggle']);
 });
