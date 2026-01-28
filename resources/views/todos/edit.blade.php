@@ -1,30 +1,64 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Edit Todo</h1>
+<div class="container mt-4">
 
-<form action="{{ route('todos.update', $todo['id']) }}" method="POST">
-    @csrf
-    @method('PUT')
+    <h2 class="mb-4">Edit Todo</h2>
 
-    <label>Title:</label>
-    <input type="text" name="title" value="{{ $todo['title'] }}" required><br><br>
+    <form method="POST" action="{{ route('todos.update', $todo->id) }}">
+        @csrf
+        @method('PUT')
 
-    <label>Category ID:</label>
-    <input type="number" name="category_id" value="{{ $todo['category_id'] }}"><br><br>
+        {{-- Title --}}
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input
+                type="text"
+                name="title"
+                class="form-control"
+                value="{{ $todo->title }}"
+                required
+            >
+        </div>
 
-    <label>Priority:</label>
-    <select name="priority">
-        <option value="low" {{ $todo['priority'] === 'low' ? 'selected' : '' }}>Low</option>
-        <option value="medium" {{ $todo['priority'] === 'medium' ? 'selected' : '' }}>Medium</option>
-        <option value="high" {{ $todo['priority'] === 'high' ? 'selected' : '' }}>High</option>
-    </select><br><br>
+        {{-- Category --}}
+        <div class="mb-3">
+            <label class="form-label">Category</label>
+            <select name="category_id" class="form-select">
+                @foreach($categories as $category)
+                    <option value="{{ $category->id }}"
+                        {{ $todo->category_id == $category->id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-    <label>Completed:</label>
-    <input type="checkbox" name="completed" value="1" {{ $todo['completed'] ? 'checked' : '' }}><br><br>
+        {{-- Priority --}}
+        <div class="mb-3">
+            <label class="form-label">Priority</label>
+            <select name="priority_id" class="form-select">
+                @foreach($priorities as $priority)
+                    <option value="{{ $priority->id }}"
+                        {{ $todo->priority_id == $priority->id ? 'selected' : '' }}>
+                        {{ $priority->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-    <button type="submit">Update</button>
-</form>
+        {{-- Actions --}}
+        <div class="d-flex justify-content-between">
+            <a href="{{ route('todos.index') }}" class="btn btn-outline-secondary">
+                Back
+            </a>
 
-<a href="{{ route('todos.index') }}">Back to list</a>
+            <button type="submit" class="btn btn-primary">
+                Update Todo
+            </button>
+        </div>
+
+    </form>
+
+</div>
 @endsection

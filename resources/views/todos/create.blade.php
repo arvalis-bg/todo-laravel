@@ -1,25 +1,62 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Create Todo</h1>
+<div class="container mt-4">
 
-<form action="{{ route('todos.store') }}" method="POST">
-    @csrf
-    <label>Title:</label>
-    <input type="text" name="title" required><br><br>
+    <h2 class="mb-4">Create Todo</h2>
 
-    <label>Category ID:</label>
-    <input type="number" name="category_id"><br><br>
+    <form method="POST" action="{{ route('todos.store') }}">
+        @csrf
 
-    <label>Priority:</label>
-    <select name="priority">
-        <option value="low">Low</option>
-        <option value="medium">Medium</option>
-        <option value="high">High</option>
-    </select><br><br>
+        {{-- Title --}}
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input
+                type="text"
+                name="title"
+                class="form-control"
+                required
+            >
+        </div>
 
-    <button type="submit">Create</button>
-</form>
+        {{-- Category --}}
+        <div class="mb-3">
+            <label class="form-label">Category</label>
+            <select name="category_id" class="form-select">
+                @foreach($categories as $category)
+                    <option value="{{ $category->id }}"
+                        {{ $category->name === 'Other' ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-<a href="{{ route('todos.index') }}">Back to list</a>
+        {{-- Priority --}}
+        <div class="mb-3">
+            <label class="form-label">Priority</label>
+            <select name="priority_id" class="form-select">
+                @foreach($priorities as $priority)
+                    <option value="{{ $priority->id }}"
+                        {{ $priority->name === 'Medium' ? 'selected' : '' }}>
+                        {{ $priority->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        {{-- Actions --}}
+        <div class="d-flex justify-content-between">
+            <a href="{{ route('todos.index') }}" class="btn btn-outline-secondary">
+                Back
+            </a>
+
+            <button type="submit" class="btn btn-success">
+                Create Todo
+            </button>
+        </div>
+
+    </form>
+
+</div>
 @endsection

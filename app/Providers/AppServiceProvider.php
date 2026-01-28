@@ -20,8 +20,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Force HTTPS in Gitpod environment
-        if (str_contains(config('app.url'), 'gitpod.dev')) {
+        if (app()->environment('local')) {
             URL::forceScheme('https');
         }
     }

@@ -13,33 +13,15 @@ Route::middleware('guest')->group(function () {
 
 /* Authenticated routes */
 Route::middleware('auth')->group(function () {
+    Route::get('/', fn () => redirect('/todos'));
 
-    // Logout
-    Route::post('/logout', [AuthWebController::class, 'logout'])
-        ->name('logout');
-
-    // Redirect home to todos list
-    Route::get('/', fn() => redirect()->route('todos.index'));
-
-    // Todo pages (Web → API)
-    Route::get('/todos', [TodoWebController::class, 'index'])
-        ->name('todos.index');
-
-    Route::get('/todos/create', [TodoWebController::class, 'create'])
-        ->name('todos.create');
-
-    Route::post('/todos', [TodoWebController::class, 'store'])
-        ->name('todos.store');
-
-    Route::get('/todos/{id}/edit', [TodoWebController::class, 'edit'])
-        ->name('todos.edit');
-
-    Route::put('/todos/{id}', [TodoWebController::class, 'update'])
-        ->name('todos.update');
-
-    Route::patch('/todos/{id}/toggle', [TodoWebController::class, 'toggle'])
-        ->name('todos.toggle');
-
-    Route::get('/todos/stats', [TodoWebController::class, 'stats'])
-        ->name('todos.stats');
+    Route::post('/logout', [AuthWebController::class, 'logout'])->name('logout');
+    Route::get('/todos', [TodoWebController::class, 'index'])->name('todos.index');
+    Route::get('/todos/create', [TodoWebController::class, 'create'])->name('todos.create');
+    Route::post('/todos', [TodoWebController::class, 'store'])->name('todos.store');
+    Route::get('/todos/{id}/edit', [TodoWebController::class, 'edit'])->name('todos.edit');
+    Route::put('/todos/{id}', [TodoWebController::class, 'update'])->name('todos.update');
+    Route::patch('/todos/{id}/toggle', [TodoWebController::class, 'toggle'])->name('todos.toggle');
+    Route::delete('/todos/{id}', [TodoWebController::class, 'destroy'])->name('todos.destroy');
+    Route::get('/todos/stats', [TodoWebController::class, 'stats'])->name('todos.stats');
 });

@@ -2,68 +2,79 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Http\Controllers\Controller;
-use App\Http\Controllers\Api\TodoController as ApiTodoController;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\TodoController as ApiTodoController;
+use App\Models\Todo;
+use App\Models\Category;
+use App\Models\Priority;
 
 class TodoWebController extends Controller
 {
     public function index(Request $request): View
     {
-        $apiController = app(ApiTodoController::class);
-        $todos = $apiController->index($request)->getData(true);
+        $todos = app(ApiTodoController::class)->index()->getData(true);
 
-        return view('todos.index', ['todos' => $todos]);
+        return view('todos.index', compact('todos'));
     }
 
     public function create(): View
     {
-        return view('todos.create');
+        $categories = Category::all(); // fetch all categories
+        $priorities = Priority::orderBy('value')->get(); // fetch all priorities by value
+        
+        return view('todos.create', compact('categories', 'priorities'));
     }
 
     public function store(Request $request): RedirectResponse
     {
-        $data = $request->only(['title', 'category_id', 'priority']);
-
-        $apiController = app(ApiTodoController::class);
-        $apiController->store($request->merge($data));
+        app(ApiTodoController::class)->store($request);
 
         return redirect()->route('todos.index');
     }
 
-    public function edit(Request $request, int $id): View
+    public function edit(int $id): View
     {
-        $apiController = app(ApiTodoController::class);
-        $todo = $apiController->show($id)->getData(true);
+        $todo = Todo::findOrFail($id);
+        $categories = Category::all();
+        $priorities = Priority::orderBy('value')->get();
 
-        return view('todos.edit', ['todo' => $todo]);
+        return view('todos.edit', compact('todo', 'categories', 'priorities'));
     }
 
     public function update(Request $request, int $id): RedirectResponse
     {
-        $data = $request->only(['title', 'category_id', 'priority', 'completed']);
+        $todo = Todo::findOrFail($id);
 
-        $apiController = app(ApiTodoController::class);
-        $apiController->update($request->merge($data), $id);
+        app(ApiTodoController::class)->update($request, $todo);
 
         return redirect()->route('todos.index');
     }
 
-    public function toggle(Request $request, int $id): RedirectResponse
+    public function toggle(int $id): RedirectResponse
     {
-        $apiController = app(ApiTodoController::class);
-        $apiController->toggle($id);
+        $todo = Todo::findOrFail($id);
 
-        return redirect()->back();
+        app(ApiTodoController::class)->toggle($todo);
+
+        return back();
     }
 
-    public function stats(Request $request): View
+    public function stats(): View
     {
-        $apiController = app(ApiTodoController::class);
-        $stats = $apiController->stats($request)->getData(true);
+        $stats = app(ApiTodoController::class)->stats()->getData(true);
 
-        return view('todos.stats', ['stats' => $stats]);
+        return view('todos.stats', compact('stats'));
+    }
+
+    public function destroy(int $id): RedirectResponse
+    {
+        $todo = Todo::findOrFail($id);
+
+        app(ApiTodoController::class)->destroy($todo);
+
+        return back();
     }
 }

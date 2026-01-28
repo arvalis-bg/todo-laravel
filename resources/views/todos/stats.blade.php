@@ -1,28 +1,32 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Todo Stats</h1>
+<div class="container mt-4">
 
-<table border="1" cellpadding="8" cellspacing="0">
-    <thead>
-        <tr>
-            <th>Category</th>
-            <th>Total Todos</th>
-            <th>Completed</th>
-            <th>Incomplete</th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach($stats as $stat)
-        <tr>
-            <td>{{ $stat['category'] }}</td>
-            <td>{{ $stat['total'] }}</td>
-            <td>{{ $stat['completed'] }}</td>
-            <td>{{ $stat['incomplete'] }}</td>
-        </tr>
-    @endforeach
-    </tbody>
-</table>
+    <h2 class="mb-4">Todo Stats</h2>
 
-<a href="{{ route('todos.index') }}">Back to list</a>
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Category</th>
+                <th>Total Todos</th>
+                <th>Completed</th>
+                <th>Incomplete</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach($stats as $stat)
+            <tr>
+                <td>{{ $stat['category'] }}</td>
+                <td>{{ $stat['total'] }}</td>
+                <td>{{ $stat['completed'] }}</td>
+                <td>{{ $stat['incomplete'] }}</td>
+            </tr>
+        @endforeach
+        </tbody>
+    </table>
+
+    <a href="{{ route('todos.index') }}" class="btn btn-secondary mt-3">Back to Todos</a>
+
+</div>
 @endsection
