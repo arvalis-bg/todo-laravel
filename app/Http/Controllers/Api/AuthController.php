@@ -11,11 +11,13 @@ class AuthController extends Controller
 {
     public function login(Request $request): JsonResponse
     {
+        // validate credentials
         $credentials = $request->validate([
             'email'=>'required|email',
             'password'=>'required|string'
         ]);
 
+        // error if credentials don't match
         if (!Auth::attempt($credentials)) {
             return response()->json(['message'=>'Invalid credentials'],401);
         }
@@ -30,15 +32,11 @@ class AuthController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
+        // logout and invalidate session
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return response()->json(['message'=>'Logged out successfully']);
-    }
-
-    public function me(Request $request): JsonResponse
-    {
-        return response()->json($request->user());
     }
 }

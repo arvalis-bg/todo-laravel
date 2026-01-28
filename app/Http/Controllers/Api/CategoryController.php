@@ -10,6 +10,7 @@ class CategoryController extends Controller
 {
     public function index(): JsonResponse
     {
+        // get all categories
         $categories = Category::withCount('todos')->get();
         return response()->json($categories);
     }

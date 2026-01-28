@@ -15,15 +15,29 @@ class TodoWebController extends Controller
 {
     public function index(Request $request): View
     {
-        $todos = app(ApiTodoController::class)->index()->getData(true);
+        // get all todos
+        $apiController = app(ApiTodoController::class);
+        $todos = collect($apiController->index($request)->getData(true));
 
-        return view('todos.index', compact('todos'));
+        // current category filter
+        $categoryId = $request->query('category_id');
+
+        // filter todos by category if selected
+        if ($categoryId) {
+            $todos = $todos->where('category_id', (int)$categoryId)->values();
+        }
+
+        // get categories for dropdown
+        $categories = Category::all();
+
+        return view('todos.index', compact('todos', 'categories', 'categoryId'));
     }
 
     public function create(): View
     {
-        $categories = Category::all(); // fetch all categories
-        $priorities = Priority::orderBy('value')->get(); // fetch all priorities by value
+        // fetch all categories/priorities
+        $categories = Category::all();
+        $priorities = Priority::orderBy('value')->get();
         
         return view('todos.create', compact('categories', 'priorities'));
     }
@@ -37,6 +51,7 @@ class TodoWebController extends Controller
 
     public function edit(int $id): View
     {
+        // get exact todo
         $todo = Todo::findOrFail($id);
         $categories = Category::all();
         $priorities = Priority::orderBy('value')->get();
@@ -46,6 +61,7 @@ class TodoWebController extends Controller
 
     public function update(Request $request, int $id): RedirectResponse
     {
+        // get exact todo
         $todo = Todo::findOrFail($id);
 
         app(ApiTodoController::class)->update($request, $todo);
@@ -55,6 +71,7 @@ class TodoWebController extends Controller
 
     public function toggle(int $id): RedirectResponse
     {
+        // get exact todo
         $todo = Todo::findOrFail($id);
 
         app(ApiTodoController::class)->toggle($todo);
@@ -64,6 +81,7 @@ class TodoWebController extends Controller
 
     public function stats(): View
     {
+        // get all todos data
         $stats = app(ApiTodoController::class)->stats()->getData(true);
 
         return view('todos.stats', compact('stats'));
@@ -71,6 +89,7 @@ class TodoWebController extends Controller
 
     public function destroy(int $id): RedirectResponse
     {
+        // get exact todo
         $todo = Todo::findOrFail($id);
 
         app(ApiTodoController::class)->destroy($todo);

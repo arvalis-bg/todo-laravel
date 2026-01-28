@@ -4,11 +4,13 @@
 <div class="container mt-4">
 
     <h2 class="mb-4">Todo Stats</h2>
-
+    
+    {{-- Buttons --}}
     <div class="mb-3">
         <a href="{{ route('todos.index') }}" class="btn btn-secondary">Back to Todos</a>
     </div>
 
+    {{-- Stats --}}
     <table class="table table-bordered">
         <thead class="table-light">
             <tr>

@@ -17,12 +17,13 @@ class AuthWebController extends Controller
 
     public function login(Request $request): RedirectResponse
     {
+        // validate credentials
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
-        // Call API controller directly
+        // call API controller directly
         $apiController = app(ApiAuthController::class);
         $apiResponse = $apiController->login($request);
 
@@ -34,6 +35,7 @@ class AuthWebController extends Controller
 
         $userData = $apiResponse->getData(true)['user'] ?? null;
 
+        // if no data, then login fail
         if (!$userData) {
             return redirect()->back()->withErrors([
                 'email' => 'Login failed',
@@ -47,7 +49,7 @@ class AuthWebController extends Controller
 
     public function logout(Request $request): RedirectResponse
     {
-        // Call API controller directly
+        // call API controller directly
         $apiController = app(ApiAuthController::class);
         $apiController->logout($request);
 

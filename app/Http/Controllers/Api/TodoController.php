@@ -13,6 +13,7 @@ class TodoController extends Controller
 {
     public function index(): JsonResponse
     {
+        // get all todos for the current user
         $todos = Todo::with(['category', 'priority'])
             ->where('user_id', auth()->id())
             ->orderByDesc('id')
@@ -23,22 +24,24 @@ class TodoController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+        // validate data
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'category_id' => 'nullable|exists:categories,id',
             'priority_id' => 'required|exists:priorities,id',
         ]);
 
-        // Default category fallback
+        // default category fallback
         if (empty($validated['category_id'])) {
             $validated['category_id'] = Category::where('name', 'Other')->value('id');
         }
 
-        // Default priority fallback
+        // default priority fallback
         if (empty($validated['priority_id'])) {
             $validated['priority_id'] = Priority::where('name', 'Medium')->value('id');
         }
 
+        // add new todo
         $todo = Todo::create([
             'title'       => $validated['title'],
             'category_id' => $validated['category_id'],
@@ -52,6 +55,7 @@ class TodoController extends Controller
 
     public function update(Request $request, Todo $todo): JsonResponse
     {
+        // validate data
         $validated = $request->validate([
             'title'=>'sometimes|required|string|max:255',
             'category_id' => 'nullable|exists:categories,id',
@@ -59,6 +63,7 @@ class TodoController extends Controller
             'completed'=>'nullable|boolean'
         ]);
 
+        // update todo
         $todo->update($validated);
 
         return response()->json($todo);
@@ -66,6 +71,7 @@ class TodoController extends Controller
 
     public function toggle(Todo $todo): JsonResponse
     {
+        // set complete/incomplete
         $todo->completed = ! $todo->completed;
         $todo->save();
 
@@ -74,6 +80,7 @@ class TodoController extends Controller
     
     public function destroy(Todo $todo): JsonResponse
     {
+        // delete todo
         $todo->delete();
 
         return response()->json(['message' => 'Todo deleted successfully']);
@@ -81,10 +88,11 @@ class TodoController extends Controller
 
     public function stats(): JsonResponse
     {
+        // show stats by category
         $stats = Todo::with('category')
             ->where('user_id', auth()->id())
             ->get()
-            ->groupBy(fn ($todo) => $todo->category->name ?? 'Uncategorized')
+            ->groupBy(fn ($todo) => $todo->category->name ?? 'Other')
             ->map(function ($items, $category) {
                 return [
                     'category' => $category,
