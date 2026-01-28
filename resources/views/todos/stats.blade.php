@@ -5,6 +5,10 @@
 
     <h2 class="mb-4">Todo Stats</h2>
 
+    <div class="mb-3">
+        <a href="{{ route('todos.index') }}" class="btn btn-secondary">Back to Todos</a>
+    </div>
+
     <table class="table table-bordered">
         <thead class="table-light">
             <tr>
@@ -25,8 +29,6 @@
         @endforeach
         </tbody>
     </table>
-
-    <a href="{{ route('todos.index') }}" class="btn btn-secondary mt-3">Back to Todos</a>
 
 </div>
 @endsection
