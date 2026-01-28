@@ -8,7 +8,6 @@ use App\Http\Controllers\Web\TodoWebController;
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthWebController::class, 'showLogin'])
         ->name('login');
-
     Route::post('/login', [AuthWebController::class, 'login']);
 });
 
@@ -19,8 +18,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthWebController::class, 'logout'])
         ->name('logout');
 
-    // Default redirect
-    Route::get('/', fn () => redirect('/todos'));
+    // Redirect home to todos list
+    Route::get('/', fn() => redirect()->route('todos.index'));
 
     // Todo pages (Web → API)
     Route::get('/todos', [TodoWebController::class, 'index'])
@@ -32,16 +31,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/todos', [TodoWebController::class, 'store'])
         ->name('todos.store');
 
-    Route::get('/todos/{todo}/edit', [TodoWebController::class, 'edit'])
+    Route::get('/todos/{id}/edit', [TodoWebController::class, 'edit'])
         ->name('todos.edit');
 
-    Route::put('/todos/{todo}', [TodoWebController::class, 'update'])
+    Route::put('/todos/{id}', [TodoWebController::class, 'update'])
         ->name('todos.update');
 
-    Route::patch('/todos/{todo}/toggle', [TodoWebController::class, 'toggle'])
+    Route::patch('/todos/{id}/toggle', [TodoWebController::class, 'toggle'])
         ->name('todos.toggle');
 
-    // Todo stats
     Route::get('/todos/stats', [TodoWebController::class, 'stats'])
         ->name('todos.stats');
 });
